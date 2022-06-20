@@ -8,8 +8,8 @@
     "build": "run-p build:app:* build:server build:prisma",
     "build:app:css": "npm run css:minify",
     "build:app:remix": "remix build",
-    "build:server": "tsc --project tsconfig.server.json",
-    "build:prisma": "tsc --project tsconfig.prisma.json",
+    "build:server": "tsc --project ./server/tsconfig.json",
+    "build:prisma": "tsc --project ./prisma/tsconfig.json",
     "dev": "npm-run-all css:clean --parallel dev:*",
     "dev:node": "cross-env NODE_ENV=development nodemon ./server/index.ts --watch ./server",
     "dev:remix": "remix watch",
@@ -18,11 +18,11 @@
     "css:minify": "npm run minify -- minify",
     "prisma": "run-s prisma:*",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "prisma db seed",
+    "prisma:seed": "ts-node ./prisma/seed.ts",
     "minify": "node ./prescripts/minify-css.js",
     "clean": "rm -rf ./build",
     "clean:css": "npm run minify -- clean",
-    "seed": "node ./prisma/seed.js"
+    "seed": "node ./build/prisma/seed.js"
   },
   "dependencies": {
     "@prisma/client": "^3.15.2",
@@ -58,10 +58,15 @@
     "ts-node": "^10.8.1",
     "typescript": "^4.6.4"
   },
+  "eslintIgnore": [
+    "/node_modules",
+    "/build",
+    "/public/build"
+  ],
   "engines": {
     "node": ">=14"
   },
   "prisma": {
-    "seed": "npm run seed"
+    "seed": "node ./build/prisma/seed.js"
   }
 }

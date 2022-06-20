@@ -1,5 +1,5 @@
 {
-    "include": ["server/*.ts"],
+    "include": ["./*.ts"],
     "compilerOptions": {
         "module": "commonjs",
         "target": "es5",
@@ -7,7 +7,7 @@
         "resolveJsonModule": true,
         "removeComments": true,
         "preserveConstEnums": true,
-        "outDir": "./build/server",
+        "outDir": "../build/prisma",
         "sourceMap": true,
         "lib": ["DOM", "DOM.Iterable", "ES2019"],
         "isolatedModules": true,
@@ -15,7 +15,7 @@
         "strict": true,
         "baseUrl": ".",
         "paths": {
-            "~/*": ["./server/*"]
+            "~/*": ["./*"]
         },
         "forceConsistentCasingInFileNames": true,
         "allowJs": false
