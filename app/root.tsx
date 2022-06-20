@@ -8,6 +8,7 @@ import {
     Scripts,
     ScrollRestoration,
 } from "@remix-run/react";
+import Analytics from "./analytics";
 import { getUser } from "./auth/session.server";
 
 export const meta: MetaFunction = () => ({
@@ -35,6 +36,7 @@ export default function App() {
             </head>
             <body>
                 <Outlet />
+                <Analytics />
                 <ScrollRestoration />
                 <Scripts />
                 <LiveReload />
