@@ -106,7 +106,6 @@ export default (userOptions = {}) => {
 
         // Don't do metrics for any ignored paths
         if (matchesAny(route, options.ignorePaths)) {
-            console.log("IGNORED!");
             return;
         }
 
