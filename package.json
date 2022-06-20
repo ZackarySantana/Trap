@@ -22,6 +22,8 @@
     "minify": "node ./prescripts/minify-css.js",
     "clean": "rm -rf ./build",
     "clean:css": "npm run minify -- clean",
+    "test:dev": "start-server-and-test dev http://localhost:3000 \"npx cypress open\"",
+    "test:run": "cross-env NODE_ENV=8811 start-server-and-test dev http://localhost:3000 \"npx cypress run\"",
     "seed": "node ./build/prisma/seed.js"
   },
   "dependencies": {
@@ -45,6 +47,7 @@
     "react-dom": "^17.0.2",
     "replace-in-file": "^6.3.5",
     "response-time": "^2.3.2",
+    "start-server-and-test": "^1.14.0",
     "tiny-invariant": "^1.2.0"
   },
   "devDependencies": {
