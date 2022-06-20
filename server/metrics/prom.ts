@@ -15,7 +15,7 @@ import {
     sessionViewAuthenticatedDurationGenerator,
 } from "./generators";
 
-const { normalizeStatusCode, normalizePath } = require("./normalizers");
+import { normalizeStatusCode, normalizePaths } from "./normalizers";
 
 const defaultOptions = {
     metricsPath: "/metrics",
@@ -23,14 +23,15 @@ const defaultOptions = {
     authenticate: null,
     collectDefaultMetrics: true,
     collectGCMetrics: false,
-    // buckets for response time from 0.05s to 2.5s
-    // these are arbitrary values since i dont know any better ¯\_(ツ)_/¯
-    requestDurationBuckets: Prometheus.exponentialBuckets(0.05, 1.75, 8),
-    requestLengthBuckets: [] as number[],
-    responseLengthBuckets: [] as number[],
-    pageViewDurationBuckets: [] as number[],
-    sessionViewDurationBuckets: [] as number[],
-    extraMasks: [] as string[],
+    requestDurationBuckets: [
+        ...linearBuckets(0, 0.1, 10),
+        ...linearBuckets(1.5, 1, 5),
+    ],
+    requestLengthBuckets: [...linearBuckets(10, 10, 40)],
+    responseLengthBuckets: [...linearBuckets(10, 10, 40)],
+    pageViewDurationBuckets: [...linearBuckets(0, 1, 100)],
+    sessionViewDurationBuckets: [...linearBuckets(0, 2, 100)],
+    normalizePaths: [] as string[][],
     customLabels: [] as string[],
     normalizeStatus: true,
     prefix: "",
@@ -40,7 +41,6 @@ export default (userOptions = {}) => {
     const options = { ...defaultOptions, ...userOptions };
     const originalLabels = ["route", "method", "status"];
     options.customLabels = [...originalLabels, ...options.customLabels];
-    options.customLabels = [...options.customLabels];
     const { metricsPath, metricsApp, normalizeStatus } = options;
 
     const app = express();
@@ -99,7 +99,7 @@ export default (userOptions = {}) => {
         // will replace ids from the route with `#val` placeholder this serves to
         // measure the same routes, e.g., /image/id1, and /image/id2, will be
         // treated as the same route
-        const route = normalizePath(url, options.extraMasks);
+        const route = normalizePaths(url ?? "", options.normalizePaths);
 
         if (route !== metricsPath) {
             const status = normalizeStatus
@@ -171,15 +171,15 @@ export default (userOptions = {}) => {
 
     app.use("/analytics/page-view", bodyParser.text(), (req, res) => {
         let data = JSON.parse(req.body);
-        const route = normalizePath(data.path, options.extraMasks);
+        const route = normalizePaths(data.path, options.normalizePaths);
 
         const labels = { route };
 
         // Count authorized and unauthorized requests
         if (req.headers.cookie && req.headers.cookie.includes("__session")) {
-            pageViewAuthDuration.observe(labels, Number(data.timeSpent));
+            pageViewAuthDuration.observe(labels, Number(data.timeSpent / 1000));
         } else {
-            pageViewDuration.observe(labels, Number(data.timeSpent));
+            pageViewDuration.observe(labels, Number(data.timeSpent / 1000));
         }
 
         res.send({ status: "done" });
@@ -190,9 +190,9 @@ export default (userOptions = {}) => {
 
         // Count authorized and unauthorized requests
         if (req.headers.cookie && req.headers.cookie.includes("__session")) {
-            sessionViewAuthDuration.observe({}, Number(data.timeSpent));
+            sessionViewAuthDuration.observe({}, Number(data.timeSpent / 1000));
         } else {
-            sessionViewDuration.observe({}, Number(data.timeSpent));
+            sessionViewDuration.observe({}, Number(data.timeSpent / 1000));
         }
 
         res.send({ status: "done" });
@@ -209,3 +209,13 @@ export default (userOptions = {}) => {
 
     return app;
 };
+
+function linearBuckets(start: number, width: number, count: number) {
+    const buckets = [] as number[];
+
+    for (let i = 0; i < count; ++i) {
+        buckets.push(Number((start + width * i).toFixed(3)));
+    }
+
+    return buckets;
+}

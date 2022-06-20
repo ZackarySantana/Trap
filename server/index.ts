@@ -16,17 +16,11 @@ if (metrics) {
 
     app.use(
         promMiddleware({
-            metricsPath: "/metrics",
             metricsApp: metricsApp,
-            collectDefaultMetrics: true,
-            autoregister: true,
-            includeStatusCode: true,
-            includePath: true,
-            includeMethod: true,
-            requestDurationBuckets: [0.1, 0.5, 1, 1.5],
-            normalizePath: [
-                ["^/account/.*/.*", "/account/#userid/.*"],
-                ["^/build/.*", "/build/resource"],
+            normalizePaths: [
+                ["account/.*", "account/#userid"],
+                ["(account/.*)(/.+)", "account/#userid$2"],
+                ["build/.*", "build/#resource"],
             ],
         })
     );

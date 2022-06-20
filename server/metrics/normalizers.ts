@@ -1,33 +1,18 @@
-import url from "url";
-import UrlValueParser from "url-value-parser";
+export function normalizePaths(pathname: string, normalizePaths: string[][]) {
+    for (let normPath of normalizePaths) {
+        console.log(pathname);
+        pathname = normalizePath(pathname, normPath[0], normPath[1]);
+        console.log(":" + pathname);
+    }
+    return pathname;
+}
 
-/**
- * Normalizes urls paths.
- *
- * This function replaces route params like ids, with a placeholder, so we can
- * set the metrics label, correctly. E.g., both routes
- *
- * - /api/v1/user/1
- * - /api/v1/user/2
- *
- * represents the same logical route, and we want to group them together,
- * hence the need for the normalization.
- *
- * @param {!string} path - url path.
- * @param {Array} extraMasks - array of regexps which will replace
- * values in the URL.
- * @param {string} [placeholder='#val'] - the placeholder that will replace id
- * like params in the url path.
- * @returns {string} a normalized path, withoud ids.
- */
 export function normalizePath(
-    originalUrl: string,
-    extraMasks = [],
-    placeholder = "#val"
+    pathname: string,
+    normalizePath: string,
+    placeholder: string
 ) {
-    const { pathname } = url.parse(originalUrl);
-    const urlParser = new UrlValueParser({ extraMasks });
-    return urlParser.replacePathValues(pathname ?? "", placeholder);
+    return pathname.replace(RegExp(normalizePath), placeholder);
 }
 
 /**
