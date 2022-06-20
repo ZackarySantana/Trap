@@ -1,8 +1,6 @@
 export function normalizePaths(pathname: string, normalizePaths: string[][]) {
     for (let normPath of normalizePaths) {
-        console.log(pathname);
         pathname = normalizePath(pathname, normPath[0], normPath[1]);
-        console.log(":" + pathname);
     }
     return pathname;
 }

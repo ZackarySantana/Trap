@@ -32,6 +32,7 @@ const defaultOptions = {
     pageViewDurationBuckets: [...linearBuckets(0, 1, 100)],
     sessionViewDurationBuckets: [...linearBuckets(0, 2, 100)],
     normalizePaths: [] as string[][],
+    ignorePaths: [] as string[],
     customLabels: [] as string[],
     normalizeStatus: true,
     prefix: "",
@@ -96,46 +97,49 @@ export default (userOptions = {}) => {
      */
     const redMiddleware = ResponseTime((req, res, time) => {
         const { url, method } = req;
-        // will replace ids from the route with `#val` placeholder this serves to
-        // measure the same routes, e.g., /image/id1, and /image/id2, will be
-        // treated as the same route
         const route = normalizePaths(url ?? "", options.normalizePaths);
 
-        if (route !== metricsPath) {
-            const status = normalizeStatus
-                ? normalizeStatusCode(res.statusCode)
-                : res.statusCode.toString();
+        // Don't count metrics for metrics path
+        if (route === metricsPath) {
+            return;
+        }
 
-            const labels = { route, method, status };
+        // Don't do metrics for any ignored paths
+        if (matchesAny(route, options.ignorePaths)) {
+            console.log("IGNORED!");
+            return;
+        }
 
-            // observe normalizing to seconds
-            requestDuration.observe(labels, time / 1000);
+        const status = normalizeStatus
+            ? normalizeStatusCode(res.statusCode)
+            : res.statusCode.toString();
 
-            // observe request length
-            if (options.requestLengthBuckets.length) {
-                const reqLength = req.headers["content-length"];
-                if (reqLength) {
-                    requestLength.observe(labels, Number(reqLength));
-                }
+        const labels = { route, method, status };
+
+        // observe normalizing to seconds
+        requestDuration.observe(labels, time / 1000);
+
+        // observe request length
+        if (options.requestLengthBuckets.length) {
+            const reqLength = req.headers["content-length"];
+            if (reqLength) {
+                requestLength.observe(labels, Number(reqLength));
             }
+        }
 
-            // observe response length
-            if (options.responseLengthBuckets.length) {
-                const resLength = res.getHeader("content-length");
-                if (resLength) {
-                    responseLength.observe(labels, Number(resLength));
-                }
+        // observe response length
+        if (options.responseLengthBuckets.length) {
+            const resLength = res.getHeader("content-length");
+            if (resLength) {
+                responseLength.observe(labels, Number(resLength));
             }
+        }
 
-            // Count authorized and unauthorized requests
-            if (
-                req.headers.cookie &&
-                req.headers.cookie.includes("__session")
-            ) {
-                requestAuthCount.inc(labels);
-            } else {
-                requestCount.inc(labels);
-            }
+        // Count authorized and unauthorized requests
+        if (req.headers.cookie && req.headers.cookie.includes("__session")) {
+            requestAuthCount.inc(labels);
+        } else {
+            requestCount.inc(labels);
         }
     });
 
@@ -218,4 +222,18 @@ function linearBuckets(start: number, width: number, count: number) {
     }
 
     return buckets;
+}
+
+function matchesAny(pathname: string, toMatches: string[]) {
+    for (let toMatch of toMatches) {
+        if (matches(pathname, toMatch)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function matches(pathname: string, toMatch: string) {
+    const matched = pathname.match(RegExp(toMatch));
+    return matched ? matched.length > 0 : false;
 }

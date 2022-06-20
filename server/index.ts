@@ -22,6 +22,7 @@ if (metrics) {
                 ["(account/.*)(/.+)", "account/#userid$2"],
                 ["build/.*", "build/#resource"],
             ],
+            ignorePaths: ["entry.client", ".map", ".js", ".ico"],
         })
     );
 
