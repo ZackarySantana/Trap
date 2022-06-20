@@ -21,8 +21,10 @@ For Remix.js projects, adding to the package.json scripts:
 },
 */
 
+// Targetting files
 const pathToCode = "app/**";
-const pathToCSS = "app/";
+// Targetting directory
+const pathToCSS = "app";
 
 const fs = require("fs");
 const replace = require("replace-in-file");
@@ -36,10 +38,14 @@ async function getFilesFromDirectory(dir) {
     const files = await Promise.all(
         dirents.map((dirent) => {
             const res = resolve(dir, dirent.name);
-            return dirent.isDirectory() ? getFilesFromDirectory(res) : res;
+            if (dirent.isDirectory()) {
+                return getFilesFromDirectory(res);
+            } else {
+                return res.endsWith(".css") ? res : "";
+            }
         })
     );
-    return files.flat();
+    return files.flat().filter((res) => res !== "");
 }
 
 /*
@@ -67,7 +73,7 @@ async function minifyFiles(directoryPath) {
     const files = await getFilesFromDirectory(directoryPath);
 
     files.forEach(async (fn) => {
-        if (fn.includes(".min.css")) return;
+        if (fn.endsWith(".min.css")) return;
         try {
             const content = fs.readFileSync(fn);
             const output = await postcss([cssnano, autoprefixer]).process(

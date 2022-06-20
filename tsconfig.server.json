@@ -1,20 +1,22 @@
 {
-    "exclude": ["./cypress"],
-    "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+    "include": ["server/*.ts"],
     "compilerOptions": {
+        "module": "es2022",
+        "target": "ES2019",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outDir": "./build/server",
+        "sourceMap": true,
         "lib": ["DOM", "DOM.Iterable", "ES2019"],
         "isolatedModules": true,
         "esModuleInterop": true,
         "jsx": "react-jsx",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "target": "ES2019",
         "strict": true,
         "baseUrl": ".",
         "paths": {
-            "~/*": ["./app/*"],
-            "@models/*": ["./app/models/*"],
-            "@auth/*": ["./app/auth/*"]
+            "~/*": ["./server/*"]
         },
         "noEmit": true,
         "forceConsistentCasingInFileNames": true,
