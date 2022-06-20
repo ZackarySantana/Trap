@@ -1,8 +1,8 @@
 {
     "include": ["server/*.ts"],
     "compilerOptions": {
-        "module": "es2022",
-        "target": "ES2019",
+        "module": "commonjs",
+        "target": "es5",
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "removeComments": true,
@@ -12,13 +12,11 @@
         "lib": ["DOM", "DOM.Iterable", "ES2019"],
         "isolatedModules": true,
         "esModuleInterop": true,
-        "jsx": "react-jsx",
         "strict": true,
         "baseUrl": ".",
         "paths": {
             "~/*": ["./server/*"]
         },
-        "noEmit": true,
         "forceConsistentCasingInFileNames": true,
         "allowJs": false
     }
