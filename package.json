@@ -19,7 +19,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
     "minify": "node ./prescripts/minify-css.js",
-    "clean": "rm ./build",
+    "clean": "rm -rf ./build",
     "clean:css": "npm run minify -- clean",
     "seed": "node ./prisma/seed.js"
   },
