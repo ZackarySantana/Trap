@@ -1,0 +1,47 @@
+{
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "setup": "run-s setup:*",
+    "setup:env": "node ./prescripts/generate-env.js",
+    "setup:prisma": "npx prisma migrate dev --name initial && npx prisma generate",
+    "build": "run-s build:*",
+    "build:css": "npm run css:minify",
+    "build:remix": "remix build",
+    "dev": "npm-run-all css:clean --parallel dev:*",
+    "dev:node": "cross-env NODE_ENV=development nodemon ./server/index.js --watch ./server",
+    "dev:remix": "remix watch",
+    "start": "cross-env NODE_ENV=production node ./server/index.js",
+    "css:clean": "npm run minify -- clean",
+    "css:minify": "npm run minify -- minify",
+    "prisma": "run-s prisma:*",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.15.2",
+    "@remix-run/express": "^1.6.0",
+    "@remix-run/node": "^1.6.0",
+    "@remix-run/react": "^1.6.0",
+    "compression": "^1.7.4",
+    "cross-env": "^7.0.3",
+    "express": "^4.18.1",
+    "morgan": "^1.10.0",
+    "prisma": "^3.15.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^1.6.0",
+    "@remix-run/eslint-config": "^1.6.0",
+    "@types/react": "^17.0.45",
+    "@types/react-dom": "^17.0.17",
+    "eslint": "^8.15.0",
+    "nodemon": "^2.0.16",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^4.6.4"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
