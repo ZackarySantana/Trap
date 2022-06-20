@@ -3,7 +3,7 @@ import { json } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 
 import { requireUser } from "~/auth/session.server";
-import { useUser } from "~/auth/utils";
+import { useUser } from "~/utils";
 
 export const loader: LoaderFunction = async ({ request }) => {
     const user = await requireUser(request);
