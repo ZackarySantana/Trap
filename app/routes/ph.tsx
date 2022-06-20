@@ -1,9 +1,9 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { Form, Link, Outlet } from "@remix-run/react";
 
 import { requireUser } from "~/auth/session.server";
-import { useUser } from "~/utils";
+import { useUser } from "~/auth/utils";
 
 export const loader: LoaderFunction = async ({ request }) => {
     const user = await requireUser(request);
@@ -13,7 +13,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function PH() {
     const user = useUser();
-    const d = useLoaderData();
 
     return (
         <>
@@ -22,6 +21,9 @@ export default function PH() {
                 <Link to={`/patches/${user.id}`}>My Patches</Link>
                 <Link to={`/hosts/${user.id}`}>My Hosts</Link>
                 <Link to="/">More</Link>
+                <Form action="/logout" method="post">
+                    <button type="submit">Logout</button>
+                </Form>
             </nav>
             <Outlet />
         </>
