@@ -34,7 +34,9 @@ if (metrics) {
     const metricsPort = process.env.METRICS_PORT || 9091;
 
     metricsApp.listen(metricsPort, () => {
-        console.log(`✅ Metrics ready: http://localhost:${metricsPort}`);
+        console.log(
+            `✅ Metrics ready: http://localhost:${metricsPort}/metrics`
+        );
     });
 }
 
