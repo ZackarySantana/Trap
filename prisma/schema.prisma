@@ -10,79 +10,11 @@ datasource db {
 model User {
   id    String @id @default(cuid())
   email String @unique
-  verified Boolean @default(false)
-
-  firstName String
-  lastName String
-  birthday DateTime @default(now())
-  gender String
-  ethnicity String
-  race String
-  classStanding String
-  expectedGraduationSemester String 
-  expectedGraduationYear Int
-  honorsCollege Boolean
-  discord String
-  linkedin String
-  social String
-
-  appliedPrograms String @default("")
-  interestedPrograms String @default("")
-  programs String @default("")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   password Password?
-  verifiedHash VerifiedHashes?
-  posts Post[]
-  comments Comment[]
-}
-
-model Event {
-  id String @id @default(cuid())
-
-  poster String
-  title String
-  program String
-
-  location String
-  time DateTime
-
-  informationLink String?
-  RSVPLink String?
-
-  internal Boolean
-}
-
-model Post {
-  id String @id @default(cuid())
-
-  header String
-  text String
-  program String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  author User @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  authorId String
-  
-  comments Comment[]
-}
-
-model Comment {
-  id    String @id @default(cuid())
-
-  text String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  postId String
 }
 
 model Password {
@@ -91,11 +23,3 @@ model Password {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
 }
-
-model VerifiedHashes {
-  hash String @unique
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @unique
-}
-

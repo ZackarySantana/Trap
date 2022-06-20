@@ -22,7 +22,7 @@ For Remix.js projects, adding to the package.json scripts:
 */
 
 const pathToCode = "app/**";
-const pathToCSS = "app/styles";
+const pathToCSS = "app/";
 
 const fs = require("fs");
 const replace = require("replace-in-file");

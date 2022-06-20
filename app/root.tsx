@@ -1,4 +1,5 @@
-import { json, LoaderFunction, MetaFunction } from "@remix-run/node";
+import type { LoaderFunction, MetaFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import {
     Links,
     LiveReload,
@@ -7,6 +8,7 @@ import {
     Scripts,
     ScrollRestoration,
 } from "@remix-run/react";
+import { getUser } from "./auth/session.server";
 
 export const meta: MetaFunction = () => ({
     charset: "utf-8",
