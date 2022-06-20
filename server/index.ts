@@ -2,12 +2,41 @@ import path from "path";
 import express from "express";
 import compression from "compression";
 import morgan from "morgan";
-
 import { createRequestHandler } from "@remix-run/express";
+
+import promMiddleware from "./metrics/prom";
 
 const BUILD_DIR = path.join(process.cwd(), "build");
 
 const app = express();
+
+const metrics = process.env.ENABLE_METRICS ?? true;
+if (metrics) {
+    const metricsApp = express();
+
+    app.use(
+        promMiddleware({
+            metricsPath: "/metrics",
+            metricsApp: metricsApp,
+            collectDefaultMetrics: true,
+            autoregister: true,
+            includeStatusCode: true,
+            includePath: true,
+            includeMethod: true,
+            requestDurationBuckets: [0.1, 0.5, 1, 1.5],
+            normalizePath: [
+                ["^/account/.*/.*", "/account/#userid/.*"],
+                ["^/build/.*", "/build/resource"],
+            ],
+        })
+    );
+
+    const metricsPort = process.env.METRICS_PORT || 9091;
+
+    metricsApp.listen(metricsPort, () => {
+        console.log(`✅ Metrics ready: http://localhost:${metricsPort}`);
+    });
+}
 
 app.use(compression());
 

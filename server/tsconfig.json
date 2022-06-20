@@ -1,5 +1,5 @@
 {
-    "include": ["./*.ts"],
+    "include": ["./*.ts", "metrics"],
     "compilerOptions": {
         "module": "commonjs",
         "target": "es5",
