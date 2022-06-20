@@ -33,10 +33,10 @@ export default function App() {
             <head>
                 <Meta />
                 <Links />
+                <Analytics />
             </head>
             <body>
                 <Outlet />
-                <Analytics />
                 <ScrollRestoration />
                 <Scripts />
                 <LiveReload />
