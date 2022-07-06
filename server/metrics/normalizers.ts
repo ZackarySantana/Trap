@@ -10,7 +10,9 @@ export function normalizePath(
     normalizePath: string,
     placeholder: string
 ) {
-    return pathname.replace(RegExp(normalizePath), placeholder);
+    pathname = pathname.replace(RegExp(normalizePath), placeholder);
+    let params = pathname.lastIndexOf("?");
+    return params > -1 ? pathname.substring(0, params) : pathname;
 }
 
 /**

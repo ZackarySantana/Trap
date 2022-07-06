@@ -26,9 +26,10 @@ const defaultOptions = {
     requestDurationBuckets: [
         ...linearBuckets(0, 0.1, 10),
         ...linearBuckets(1.5, 1, 5),
+        ...linearBuckets(10, 5, 3),
     ],
-    requestLengthBuckets: [...linearBuckets(10, 10, 40)],
-    responseLengthBuckets: [...linearBuckets(10, 10, 40)],
+    requestLengthBuckets: [...linearBuckets(0, 5, 20)],
+    responseLengthBuckets: [...linearBuckets(0, 5, 20)],
     pageViewDurationBuckets: [...linearBuckets(0, 1, 100)],
     sessionViewDurationBuckets: [...linearBuckets(0, 2, 100)],
     normalizePaths: [] as string[][],
