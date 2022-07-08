@@ -13,7 +13,7 @@ export default function Analytics() {
 
     const sendPageViewAnalytics = () => {
         navigator.sendBeacon(
-            "analytics/page-view",
+            "/analytics/page-view",
             JSON.stringify({
                 timeSpent: Date.now() - pageViewStartTime.current,
                 path: oldLocation.current,
@@ -23,7 +23,7 @@ export default function Analytics() {
 
     const sendSessionViewAnalytics = () => {
         navigator.sendBeacon(
-            "analytics/session-view",
+            "/analytics/session-view",
             JSON.stringify({
                 timeSpent: Date.now() - sessionViewStartTime.current,
                 paths: locations.current,
